@@ -5,15 +5,15 @@ type Article {
     _id: ID!
     title: String!
     content: String!
-    createdAt: Int!
-    updateAr: Int!
+    createdAt: Float!
+    updatedAt: Float!
 }
 type Booking {
     _id: ID!
     event: Event!
     user: User!
-    createdAt: String!
-    updatedAt: String!
+    createdAt: Int!
+    updatedAt: Int!
 }
 
 type Event {
@@ -29,7 +29,12 @@ type User {
     _id: ID!,
     email: String!
     password: String
-    createEvents: [Event!] 
+    createEvents: [Event!]
+}
+
+input ArticleInput {
+    title: String!
+    content: String!
 }
 
 input EventInput {
@@ -46,12 +51,14 @@ input UserInput {
 
 type Query {
     hello: String,
-    article: [Article!]!
+    homeList: [Article!]!
+    article(id: String!): Article
     events: [Event!]!
     bookings: [Booking!]!
 }
 
 type Mutation {
+    createArticle(articleInput: ArticleInput): Article
     createEvent(eventInput: EventInput): Event
     createUser(userInput: UserInput): User
     bookEvent(eventId: ID!): Booking!

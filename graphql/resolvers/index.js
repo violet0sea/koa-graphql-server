@@ -1,8 +1,9 @@
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 
-const Event = require("../../models/event");
-const User = require("../../models/user");
-const Booking = require("../../models/booking");
+const Event = require('../../models/event');
+const User = require('../../models/user');
+const Booking = require('../../models/booking');
+const Article = require('../../models/article');
 
 const events = eventIds => {
   return Event.find({ _id: { $in: eventIds } })
@@ -11,7 +12,7 @@ const events = eventIds => {
         return {
           ...event._doc,
           _id: event.id,
-          creator: user.bind(this, event.creator)
+          creator: user.bind(this, event.creator),
         };
       });
     })
@@ -26,7 +27,7 @@ const user = userId => {
       return {
         ...user._doc,
         _id: user.id,
-        createEvents: events.bind(this, user._doc.createEvents)
+        createEvents: events.bind(this, user._doc.createEvents),
       };
     })
     .catch(err => {
@@ -35,24 +36,30 @@ const user = userId => {
 };
 
 module.exports = {
-  hello: () => "nihao",
-  article: () => {
-    return [
-      {
-        title: "graphql",
-        content: "text is empty"
-      }
-    ];
+  homeList: () => {
+    return Article.find().then(articles => {
+      return articles.map(item => {
+        const formatData = { ...item._doc };
+        formatData.createdAt = new Date(formatData.createdAt).getTime();
+        formatData.updatedAt = new Date(formatData.updatedAt).getTime();
+        return formatData;
+      });
+    });
+  },
+  article: args => {
+    return Article.findById(args.id).then(article => {
+      return article._doc;
+    });
   },
   events: () => {
     return Event.find()
-      .populate("creator")
+      .populate('creator')
       .then(events => {
         return events.map(event => {
           return {
             ...event._doc,
             _id: event.id,
-            creator: user.bind(this, event._doc.creator)
+            creator: user.bind(this, event._doc.creator),
           };
         });
       })
@@ -68,10 +75,21 @@ module.exports = {
           ...booking._doc,
           id: booking.id,
           createdAt: new Date(booking._doc.createdAt).toISOString(),
-          updatedAt: new Date(booking._doc.updatedAt).toISOString()
+          updatedAt: new Date(booking._doc.updatedAt).toISOString(),
         };
       });
     } catch (err) {}
+  },
+  createArticle: args => {
+    const articleInput = args.articleInput;
+    const { title, content } = articleInput;
+    const article = new Article({
+      title,
+      content,
+    });
+    return article.save().then(result => {
+      return result;
+    });
   },
   createEvents: args => {
     const eventInput = args.eventInput;
@@ -80,19 +98,19 @@ module.exports = {
       description: eventInput.description,
       price: +eventInput.price,
       date: new Date(eventInput.date),
-      creator: "5c223b0ef8c3b72a23c88364"
+      creator: '5c223b0ef8c3b72a23c88364',
     });
     let createEvent;
     return event
       .save()
       .then(result => {
-        console.log("result", result);
+        console.log('result', result);
         createEvent = { ...result._doc, id: result._doc._id.toString() };
-        return User.findById("5c223b0ef8c3b72a23c88364");
+        return User.findById('5c223b0ef8c3b72a23c88364');
       })
       .then(user => {
         if (!user) {
-          throw new Error("User not found");
+          throw new Error('User not found');
         }
 
         user.createEvents.push(event);
@@ -111,14 +129,14 @@ module.exports = {
     return User.findOne({ email: userInput.email })
       .then(user => {
         if (user) {
-          throw new Error("User exist!");
+          throw new Error('User exist!');
         }
         return bcrypt.hash(userInput.password, 12);
       })
       .then(hashedPassword => {
         const user = new User({
           email: userInput.email,
-          password: hashedPassword
+          password: hashedPassword,
         });
         return user.save();
       })
@@ -132,15 +150,15 @@ module.exports = {
   bookEvent: async args => {
     const fetchedEvent = await Event.findOne({ _id: args.eventId });
     const booking = new Booking({
-      user: "5c223b0ef8c3b72a23c88364",
-      event: fetchedEvent
+      user: '5c223b0ef8c3b72a23c88364',
+      event: fetchedEvent,
     });
     const result = await booking.save();
     return {
       ...result._doc,
       _id: result.id,
       createdAt: new Date(booking._doc.createdAt).toISOString(),
-      updatedAt: new Date(booking._doc.updatedAt).toISOString()
+      updatedAt: new Date(booking._doc.updatedAt).toISOString(),
     };
-  }
+  },
 };
