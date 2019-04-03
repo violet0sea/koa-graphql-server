@@ -3,14 +3,15 @@ const bodyParser = require('koa-bodyparser');
 const Router = require('koa-router');
 const graphqlHTTP = require('koa-graphql');
 const mongoose = require('mongoose');
-var cors = require('koa-cors');
+const cors = require('koa-cors');
 
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolvers = require('./graphql/resolvers');
-
+const { accessLogger } = require('./utils/log');
 const app = new koa();
 const router = new Router();
 
+app.use(accessLogger());
 app.use(cors());
 app.use(bodyParser());
 router.all(

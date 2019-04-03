@@ -1,0 +1,2 @@
+[2019-04-03T10:49:37.631] [INFO] access - ::1 - - "POST /graphql? HTTP/1.1" 200 53 "http://localhost:9001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.96 Safari/537.36"
+[2019-04-03T10:49:46.671] [INFO] access - ::1 - - "POST /graphql? HTTP/1.1" 200 53 "http://localhost:9001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.96 Safari/537.36"

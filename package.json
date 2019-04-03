@@ -10,6 +10,7 @@
     "koa-bodyparser": "^4.2.1",
     "koa-cors": "0.0.16",
     "koa-graphql": "^0.8.0",
+    "koa-log4": "^2.3.2",
     "koa-router": "^7.4.0",
     "mongoose": "^5.4.0",
     "nodemon": "^1.18.9"
